@@ -1,0 +1,38 @@
+## --- Compilation Artifacts ---
+*.annot
+*.cmo
+*.cma
+*.cmi
+*.a
+*.o
+*.cmx
+*.cmxs
+*.cmxa
+
+## --- Merlin & Build Diagnostics ---
+# Code inspection/autocompletion tools (e.g., Merlin)
+*.cmt
+*.cmti
+
+## --- Build Systems (Dune & ocamlbuild) ---
+# Default working directory for build systems
+_build/
+
+# Legacy ocamlbuild targets
+*.byte
+*.native
+
+## --- Package Management & Environment ---
+# Local OPAM switches (contains compiler and dependencies)
+_opam/
+
+# Dune generated files
+*.install
+
+## --- Legacy & Tool Configurations ---
+# OASIS generated files
+setup.data
+setup.log
+
+# Merlin configuration for Vim, Emacs, and VS Code
+.merlin
