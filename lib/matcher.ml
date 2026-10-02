@@ -27,19 +27,14 @@
 (* [go r input k] matches some prefix of [input] against [r], then calls
    [k] on whatever input is left over.  It is true when some way of
    matching makes [k] return true. *)
-let rec go (r : re) (input : char list) (k : char list -> bool) : bool =
-  match r with
-  | Empty -> k input
-  | Star _ when input = [] -> true
-  | Star Empty -> false
-  | Char c -> (
-      match input with
-      | x :: rest when x = c -> k rest
-      | _ -> false)
-  | Seq (a, b) -> go a input (fun rest -> go b rest k)
-  | Alt (a, b) -> go a input k || go b input k
-  | Star a -> go a input (fun rest -> go r rest k)
+let rec matchesStartLeavingValidRemainder (startsWith: re) (input: string) (validRemainder: string -> bool) =
+  let n = String.length input in
+  match (startsWith, input) with
+  | (Empty, _) -> validRemainder input
+  | (Char c, _) when n > 0 && String.get input 0 = c -> validRemainder (String.sub input 1 (n - 1))
+  | (Seq (first, second), _) -> matchesStartLeavingValidRemainder first input (fun rest -> matchesStartLeavingValidRemainder second rest validRemainder)
+  | (Alt (a, b), _) -> matchesStartLeavingValidRemainder a input validRemainder || matchesStartLeavingValidRemainder b input validRemainder
+  | (Star p, x) -> validRemainder input || matchesStartLeavingValidRemainder p input (fun rest -> String.length rest < n && matchesStartLeavingValidRemainder (Star p) rest validRemainder)
+  | _ -> false
 
-let matches (r : re) (s : string) : bool =
-  let input = List.init (String.length s) (String.get s) in
-  go r input (fun rest -> rest = [])
+let matches r s = matchesStartLeavingValidRemainder r s (fun rest -> rest = "")
