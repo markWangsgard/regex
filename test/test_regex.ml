@@ -44,4 +44,10 @@ let () = assert (not (matches pattern "abba"))
 (* backtracking really is required: the star must give characters back *)
 let () = assert (matches (Seq (Star a, Seq (a, b))) "aaab")
 
+let words = ["abb"; "ab"; "babb"; ""; "aabb"]
+let () = assert (keep_matches pattern words = ["abb"; "babb"; "aabb"])
+let () = assert (label_matches pattern ["abb"; "ab"] = [("abb", true); ("ab", false)])
+let () = assert (total_match_length pattern words = 11)
+let () = assert (total_match_length pattern [] = 0)
+
 let () = print_endline "All tests passed!"
